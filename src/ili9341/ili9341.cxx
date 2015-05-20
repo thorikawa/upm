@@ -377,10 +377,12 @@ void Adafruit_ILI9341::end(void) {
 inline void Adafruit_ILI9341::setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
   writecommand_cont(ILI9341_CASET); // Column addr set
-  writedata16X2_cont(x0, x1);     // XSTA
+  writedata16_cont(x0);
+  writedata16_cont(x1);
 
   writecommand_cont(ILI9341_PASET); // Row addr set
-  writedata16X2_cont(y0, y1);     // XSTA
+  writedata16_cont(y0);
+  writedata16_cont(y1);
 
   writecommand(ILI9341_RAMWR);
 }
