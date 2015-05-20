@@ -53,24 +53,29 @@ void inline Adafruit_ILI9341::spiwrite(uint8_t c) {
   //Serial.print("0x"); Serial.print(c, HEX); Serial.print(", ");
 
   // transaction sets mode
-  mraa_spi_write(SPI, c);
+  int r = mraa_spi_write(SPI, c);
+  printf("mraa_spi_write:%d\n", r);
 }
 
 void inline Adafruit_ILI9341::spiwrite16(uint16_t c) {
   uint8_t txData[2];
-  uint8_t rxData[2];
+  // uint8_t rxData[2];
+  uint8_t* recv;
   txData[0] = (c>>8) & 0xff;
   txData[1] = c & 0xff; 
-  mraa_spi_write_buf(SPI, txData, 2);
+  recv = mraa_spi_write_buf(SPI, txData, 2);
+  if (recv == NULL) fprintf(stderr, "spiwrite16: write error\n");
 }
 
 void inline Adafruit_ILI9341::spiwrite16X2(uint16_t w1, uint16_t w2) {
   uint8_t txData[4];
+  uint8_t* recv;
   txData[0] = (w1>>8) & 0xff;
   txData[1] = w1 & 0xff; 
   txData[2] = (w2>>8) & 0xff;
   txData[3] = w2 & 0xff; 
-  mraa_spi_write_buf(SPI, txData, 4);
+  recv = mraa_spi_write_buf(SPI, txData, 4);
+  if (recv == NULL) fprintf(stderr, "spiwrite16: write error\n");
 }
 
 void inline Adafruit_ILI9341::spiwriteN(uint32_t count, uint16_t c) {
@@ -81,18 +86,21 @@ void inline Adafruit_ILI9341::spiwriteN(uint32_t count, uint16_t c) {
   } else {
     uint8_t txData[2*X86_BUFFSIZE];
     uint8_t rxData[2*X86_BUFFSIZE];
+    uint8_t* recv;
     for (uint8_t i = 0; i < X86_BUFFSIZE*2; i+=2) {
       txData[i] = (c>>8) & 0xff;
       txData[i+1] = c & 0xff;
     }
     while (count >= X86_BUFFSIZE) {
       // mraa_spi_transfer_buf(SPI, txData, rxData, 2*X86_BUFFSIZE);
-      mraa_spi_write_buf(SPI, txData, 2*X86_BUFFSIZE);
+      recv = mraa_spi_write_buf(SPI, txData, 2*X86_BUFFSIZE);
+      if (recv == NULL) fprintf(stderr, "spiwrite16: write error\n");
       count -= X86_BUFFSIZE;
     }
     if (count) {
       // mraa_spi_transfer_buf(SPI, txData, rxData, 2*count);
-      mraa_spi_write_buf(SPI, txData, 2*count);
+      recv = mraa_spi_write_buf(SPI, txData, 2*count);
+      if (recv == NULL) fprintf(stderr, "spiwrite16: write error\n");
     }
   }
 }
@@ -155,9 +163,13 @@ void Adafruit_ILI9341::writedata16X2_cont(uint16_t w1, uint16_t w2) {
 // establish settings and protect from interference from other
 // libraries.  Otherwise, they simply do nothing.
 inline void Adafruit_ILI9341::spi_begin(void) {
-  mraa_spi_frequency(SPI, SPI_FREQ);
-  mraa_spi_lsbmode(SPI, false);  
-  mraa_spi_mode(SPI, MRAA_SPI_MODE0);
+  mraa_result_t error = MRAA_SUCCESS;
+  error = mraa_spi_frequency(SPI, SPI_FREQ);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
+  error = mraa_spi_lsbmode(SPI, false);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
+  error = mraa_spi_mode(SPI, MRAA_SPI_MODE0);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
 }
 
 inline void Adafruit_ILI9341::spi_end(void) {
