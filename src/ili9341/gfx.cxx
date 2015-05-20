@@ -32,10 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "gfx.h"
-#include "glcdfont.h"
 #include <math.h>
 
 using namespace upm;
+#include "glcdfont.h"
 
 #define pgm_read_byte(x)        (*((char *)x))
 
