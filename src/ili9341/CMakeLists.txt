@@ -1,5 +1,5 @@
 set (libname "ili9341")
 set (libdescription "libupm SPI LCD")
-set (module_src gfx.cxx ili9341.cxx SimpleTransaction.cxx)
+set (module_src gfx.cxx ili9341.cxx)
 set (module_h gfx.h ili9341.h)
 upm_module_init()
