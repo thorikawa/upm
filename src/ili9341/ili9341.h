@@ -127,10 +127,10 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
   void     writeRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pcolors);
 
 
-  void     spiwrite(uint8_t) __attribute__((always_inline)),
-           spiwrite16(uint16_t) __attribute__((always_inline)),
-           spiwrite16X2(uint16_t, uint16_t) __attribute__((always_inline)),
-           spiwriteN(uint32_t, uint16_t) __attribute__((always_inline)),
+  void     spiwrite(uint8_t),
+           spiwrite16(uint16_t),
+           spiwrite16X2(uint16_t, uint16_t),
+           spiwriteN(uint32_t, uint16_t),
            writecommand(uint8_t c),
            writecommand_cont(uint8_t c),
            writedata(uint8_t d),
@@ -143,9 +143,9 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
 
  private:
   uint8_t  tabcolor;
-  void setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) __attribute__((always_inline)) ;
-  void spi_begin(void) __attribute__((always_inline));
-  void spi_end(void) __attribute__((always_inline));
+  void setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) ;
+  void spi_begin(void);
+  void spi_end(void);
 
   uint8_t mySPCR;
   
@@ -163,42 +163,42 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
   mraa_spi_context SPI;
 //#define MINIMIZE_CALLS  
 #ifndef MINIMIZE_CALLS
-  void DCHigh()  __attribute__((always_inline)) {
+  void DCHigh()  {
             mraa_gpio_write(_gpioDC, 1);
     }
   
-  void DCLow()  __attribute__((always_inline)) {
+  void DCLow()  {
             mraa_gpio_write(_gpioDC, 0);
 	}
 
-  void CSHigh()  __attribute__((always_inline)) {
+  void CSHigh()  {
             mraa_gpio_write(_gpioCS, 1);
 	}
-  void CSLow()  __attribute__((always_inline)) {
+  void CSLow()  {
             mraa_gpio_write(_gpioCS, 0);
     }
 #else
-  void DCHigh()  __attribute__((always_inline)) {
+  void DCHigh()  {
         if (!_fDCHigh) {
             mraa_gpio_write(_gpioDC, 1);
             _fDCHigh = 1;
         }
     }
   
-  void DCLow()  __attribute__((always_inline)) {
+  void DCLow()  {
         if (_fDCHigh) {
             mraa_gpio_write(_gpioDC, 0);
             _fDCHigh = 0;
         }
 	}
 
-  void CSHigh()  __attribute__((always_inline)) {
+  void CSHigh()  {
         if (!_fCSHigh) {
             mraa_gpio_write(_gpioCS, 1);
             _fCSHigh = 1;
         }
 	}
-  void CSLow()  __attribute__((always_inline)) {
+  void CSLow()  {
         if (_fCSHigh) {
             mraa_gpio_write(_gpioCS, 0);
             _fCSHigh = 0;
