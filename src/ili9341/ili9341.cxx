@@ -203,6 +203,8 @@ void Adafruit_ILI9341::commandList(uint8_t *addr) {
 
 
 void Adafruit_ILI9341::begin(void) {
+  mraa_result_t error = MRAA_SUCCESS;
+
   mraa_gpio_context gpioRST = NULL;
   if (_rst > 0) 
     gpioRST = mraa_gpio_init(_rst);
@@ -213,10 +215,13 @@ void Adafruit_ILI9341::begin(void) {
   }
 
 
-  SPI = mraa_spi_init(1);   // which buss?   will experment here...
-  mraa_spi_frequency(SPI, SPI_FREQ);
-  mraa_spi_lsbmode(SPI, false);  
-  mraa_spi_mode(SPI, MRAA_SPI_MODE0);
+  SPI = mraa_spi_init(0);   // which buss?   will experment here...
+  error = mraa_spi_frequency(SPI, SPI_FREQ);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
+  error = mraa_spi_lsbmode(SPI, false);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
+  error = mraa_spi_mode(SPI, MRAA_SPI_MODE0);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
 
   _gpioDC = mraa_gpio_init(_dc);
   mraa_gpio_dir(_gpioDC, MRAA_GPIO_OUT);
