@@ -220,14 +220,24 @@ void Adafruit_ILI9341::begin(void) {
   if (error != MRAA_SUCCESS) mraa_result_print (error);
 
   _gpioDC = mraa_gpio_init(_dc);
-  mraa_gpio_dir(_gpioDC, MRAA_GPIO_OUT);
+  if (_gpioDC == NULL) {
+    fprintf (stderr, "Are you sure that pin%d you requested is valid on your platform?", _dc);
+    exit (1);
+  }
+  error = mraa_gpio_dir(_gpioDC, MRAA_GPIO_OUT);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
   // mraa_gpio_use_mmaped(_gpioDC, 1);
 
   // mraa_gpio_write(_gpioDC, 1);  
   // _fDCHigh = 1; // init to high
   
   _gpioCS = mraa_gpio_init(_cs);
-  mraa_gpio_dir(_gpioCS, MRAA_GPIO_OUT);
+  if (_gpioCS == NULL) {
+    fprintf (stderr, "Are you sure that pin%d you requested is valid on your platform?", _cs);
+    exit (1);
+  }
+  error = mraa_gpio_dir(_gpioCS, MRAA_GPIO_OUT);
+  if (error != MRAA_SUCCESS) mraa_result_print (error);
   // mraa_gpio_use_mmaped(_gpioCS, 1);
   // mraa_gpio_write(_gpioCS, 1);  
   // _fCSHigh = 1; // init to high
