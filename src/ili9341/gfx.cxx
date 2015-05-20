@@ -32,16 +32,17 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "gfx.h"
-#include <math.h>
+#include "glcdfont.h"
+#ifdef __AVR__
+ #include <avr/pgmspace.h>
+#else
+ #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+#endif
+#include <stdlib.h>
+
+#define swap(a, b) { int16_t t = a; a = b; b = t; }
 
 using namespace upm;
-#include "glcdfont.h"
-
-#define pgm_read_byte(x)        (*((char *)x))
-
-inline uint16_t abs(int16_t val) {
-    return (val >= 0) ? val : -val;
-}
 
 Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
   WIDTH(w), HEIGHT(h)
@@ -308,7 +309,8 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,
     dx02 = x2 - x0,
     dy02 = y2 - y0,
     dx12 = x2 - x1,
-    dy12 = y2 - y1,
+    dy12 = y2 - y1;
+  int32_t
     sa   = 0,
     sb   = 0;
 
@@ -361,13 +363,56 @@ void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++ ) {
       if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) {
-  drawPixel(x+i, y+j, color);
+        drawPixel(x+i, y+j, color);
       }
     }
   }
 }
 
+// Draw a 1-bit color bitmap at the specified x, y position from the
+// provided bitmap buffer (must be PROGMEM memory) using color as the
+// foreground color and bg as the background color.
+void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
+            const uint8_t *bitmap, int16_t w, int16_t h,
+            uint16_t color, uint16_t bg) {
+
+  int16_t i, j, byteWidth = (w + 7) / 8;
+  
+  for(j=0; j<h; j++) {
+    for(i=0; i<w; i++ ) {
+      if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) {
+        drawPixel(x+i, y+j, color);
+      }
+      else {
+        drawPixel(x+i, y+j, bg);
+      }
+    }
+  }
+}
+
+//Draw XBitMap Files (*.xbm), exported from GIMP,
+//Usage: Export from GIMP to *.xbm, rename *.xbm to *.c and open in editor.
+//C Array can be directly used with this function
+void Adafruit_GFX::drawXBitmap(int16_t x, int16_t y,
+                              const uint8_t *bitmap, int16_t w, int16_t h,
+                              uint16_t color) {
+  
+  int16_t i, j, byteWidth = (w + 7) / 8;
+  
+  for(j=0; j<h; j++) {
+    for(i=0; i<w; i++ ) {
+      if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (1 << (i % 8))) {
+        drawPixel(x+i, y+j, color);
+      }
+    }
+  }
+}
+
+#if ARDUINO >= 100
 size_t Adafruit_GFX::write(uint8_t c) {
+#else
+void Adafruit_GFX::write(uint8_t c) {
+#endif
   if (c == '\n') {
     cursor_y += textsize*8;
     cursor_x  = 0;
@@ -381,7 +426,18 @@ size_t Adafruit_GFX::write(uint8_t c) {
       cursor_x = 0;
     }
   }
+#if ARDUINO >= 100
   return 1;
+#endif
+}
+
+void Adafruit_GFX::println(const char* string)
+{
+  for (const char* p = string; *p; ++p)
+  {
+    write(uint8_t(*p));
+  }
+  write('\n');
 }
 
 // Draw a character
@@ -439,11 +495,11 @@ void Adafruit_GFX::setTextColor(uint16_t c, uint16_t b) {
   textbgcolor = b; 
 }
 
-void Adafruit_GFX::setTextWrap(boolean w) {
+void Adafruit_GFX::setTextWrap(bool w) {
   wrap = w;
 }
 
-uint8_t Adafruit_GFX::getRotation(void) {
+uint8_t Adafruit_GFX::getRotation(void) const {
   return rotation;
 }
 
@@ -464,14 +520,14 @@ void Adafruit_GFX::setRotation(uint8_t x) {
 }
 
 // Return the size of the display (per current rotation)
-int16_t Adafruit_GFX::width(void) {
+int16_t Adafruit_GFX::width(void) const {
   return _width;
 }
  
-int16_t Adafruit_GFX::height(void) {
+int16_t Adafruit_GFX::height(void) const {
   return _height;
 }
 
-void Adafruit_GFX::invertDisplay(boolean i) {
+void Adafruit_GFX::invertDisplay(bool i) {
   // Do nothing, must be subclassed if supported
 }

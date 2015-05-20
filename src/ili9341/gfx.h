@@ -1,9 +1,6 @@
 #pragma once
 
-#include <mraa.h>
-
-#define boolean bool
-#define swap(a, b) { int16_t t = a; a = b; b = t; }
+#include <stdint.h>
 
 namespace upm {
 
@@ -25,9 +22,7 @@ class Adafruit_GFX {
     drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color),
     fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color),
     fillScreen(uint16_t color),
-    drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
-      uint16_t bg, uint8_t size),
-    invertDisplay(boolean i);
+    invertDisplay(bool i);
 
   // These exist only with Adafruit_GFX (no subclass overrides)
   void
@@ -47,20 +42,31 @@ class Adafruit_GFX {
       int16_t radius, uint16_t color),
     drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap,
       int16_t w, int16_t h, uint16_t color),
+    drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap,
+      int16_t w, int16_t h, uint16_t color, uint16_t bg),
+    drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, 
+      int16_t w, int16_t h, uint16_t color),
+    drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
+      uint16_t bg, uint8_t size),
     setCursor(int16_t x, int16_t y),
     setTextColor(uint16_t c),
     setTextColor(uint16_t c, uint16_t bg),
     setTextSize(uint8_t s),
-    setTextWrap(boolean w),
+    setTextWrap(bool w),
     setRotation(uint8_t r);
 
+#if ARDUINO >= 100
   virtual size_t write(uint8_t);
+#else
+  virtual void   write(uint8_t);
+#endif
 
-  int16_t
-    height(void),
-    width(void);
+  void println(const char* string);
 
-  uint8_t getRotation(void);
+  int16_t height(void) const;
+  int16_t width(void) const;
+
+  uint8_t getRotation(void) const;
 
  protected:
   const int16_t
@@ -73,9 +79,8 @@ class Adafruit_GFX {
   uint8_t
     textsize,
     rotation;
-  boolean
+  bool
     wrap; // If set, 'wrap' text at right edge of display
-  static const unsigned char font[];  
 };
 
 }

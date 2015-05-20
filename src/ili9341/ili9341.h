@@ -15,8 +15,9 @@
 
 #pragma once
 
-#include <mraa.h>
-#include <gfx.h>
+#include "gfx.h"
+#include <mraa/gpio.h>
+#include <mraa/spi.h>
 
 
 #define ILI9341_TFTWIDTH  240
@@ -77,134 +78,74 @@
 /*
 #define ILI9341_PWCTR6  0xFC
 
-*/
+ */
 
 // Color definitions
-#define	ILI9341_BLACK   0x0000
-#define	ILI9341_BLUE    0x001F
-#define	ILI9341_RED     0xF800
-#define	ILI9341_GREEN   0x07E0
+#define ILI9341_BLACK   0x0000
+#define ILI9341_BLUE    0x001F
+#define ILI9341_RED     0xF800
+#define ILI9341_GREEN   0x07E0
 #define ILI9341_CYAN    0x07FF
 #define ILI9341_MAGENTA 0xF81F
 #define ILI9341_YELLOW  0xFFE0  
 #define ILI9341_WHITE   0xFFFF
 
-//=================================================================
-// Hardware SPI version
-//=================================================================
 
 namespace upm {
-
 class Adafruit_ILI9341 : public Adafruit_GFX {
 
- public:
+public:
 
   Adafruit_ILI9341(int8_t _CS, int8_t _DC, int8_t _RST = -1);
 
   void     begin(void),
-           end(void),
-           setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1),
-           pushColor(uint16_t color),
-           fillScreen(uint16_t color),
-           drawPixel(int16_t x, int16_t y, uint16_t color),
-           drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
-           drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color),
-           fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-             uint16_t color),
-           setRotation(uint8_t r),
-            drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
-                uint16_t bg, uint8_t size),
-         invertDisplay(boolean i);
+      setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1),
+      pushColor(uint16_t color),
+      fillScreen(uint16_t color),
+      drawPixel(int16_t x, int16_t y, uint16_t color),
+      drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
+      drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color),
+      fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
+          uint16_t color),
+          setRotation(uint8_t r),
+          invertDisplay(bool i);
   uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
 
-   /* readdata is now used in readPixel/readRect, readcommand8 used in test programs */
+  /* These are not for current use, 8-bit protocol only! */
   uint8_t  readdata(void),
-           readcommand8(uint8_t reg, uint8_t index = 0);
-
-	// Added functions to read pixel data...
-  uint16_t readPixel(int16_t x, int16_t y);
-  void     readRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pcolors);
-  void     writeRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t *pcolors);
-
+      readcommand8(uint8_t reg, uint8_t index = 0);
+  /*
+  uint16_t readcommand16(uint8_t);
+  uint32_t readcommand32(uint8_t);
+  void     dummyclock(void);
+   */
 
   void     spiwrite(uint8_t),
-           spiwrite16(uint16_t),
-           spiwrite16X2(uint16_t, uint16_t),
-           spiwriteN(uint32_t, uint16_t),
-           writecommand(uint8_t c),
-           writecommand_cont(uint8_t c),
-           writedata(uint8_t d),
-           writedata_cont(uint8_t d),
-           writedata16(uint16_t color),
-           writedata16_cont(uint16_t color),
-           writedata16X2_cont(uint16_t w1, uint16_t w2),
-           commandList(uint8_t *addr);
+      writecommand(uint8_t c),
+      writedata(uint8_t d),
+      commandList(uint8_t *addr);
   uint8_t  spiread(void);
 
- private:
+  void dcHigh();
+  void dcLow();
+
+  void csHigh();
+  void csLow();
+
+private:
   uint8_t  tabcolor;
-  void setAddr(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) ;
-  void spi_begin(void);
-  void spi_end(void);
 
-  uint8_t mySPCR;
-  
-  int8_t  _cs, _dc, _rst;
-  
-  // for MRAA on Intel Edison
-  // Use C versions since c++ is simply wrapper anyway
-  mraa_gpio_context _gpioDC;
-  mraa_gpio_context _gpioCS;
-  
-  uint8_t _fDCHigh; // is the DC High
-  uint8_t _fCSHigh; // is the CS high... 
-  
-  // try the C++ version
-  mraa_spi_context SPI;
-//#define MINIMIZE_CALLS  
-#ifndef MINIMIZE_CALLS
-  void DCHigh()  {
-            mraa_gpio_write(_gpioDC, 1);
-    }
-  
-  void DCLow()  {
-            mraa_gpio_write(_gpioDC, 0);
-	}
+  int8_t        m_cs;
+  int8_t              m_dc;
+  int8_t              m_rst;
 
-  void CSHigh()  {
-            mraa_gpio_write(_gpioCS, 1);
-	}
-  void CSLow()  {
-            mraa_gpio_write(_gpioCS, 0);
-    }
-#else
-  void DCHigh()  {
-        if (!_fDCHigh) {
-            mraa_gpio_write(_gpioDC, 1);
-            _fDCHigh = 1;
-        }
-    }
-  
-  void DCLow()  {
-        if (_fDCHigh) {
-            mraa_gpio_write(_gpioDC, 0);
-            _fDCHigh = 0;
-        }
-	}
+  mraa_gpio_context     m_csPinCtx;
+  mraa_gpio_context     m_dcPinCtx;
+  mraa_gpio_context     m_rstPinCtx;
+  mraa_spi_context      m_spi;
 
-  void CSHigh()  {
-        if (!_fCSHigh) {
-            mraa_gpio_write(_gpioCS, 1);
-            _fCSHigh = 1;
-        }
-	}
-  void CSLow()  {
-        if (_fCSHigh) {
-            mraa_gpio_write(_gpioCS, 0);
-            _fCSHigh = 0;
-        }
-    }
-#endif    
+  uint16_t              m_frameBuffer[ILI9341_TFTWIDTH * ILI9341_TFTHEIGHT];
+  uint16_t              m_scratchBuffer[ILI9341_TFTWIDTH * ILI9341_TFTHEIGHT];
 };
 
 }
