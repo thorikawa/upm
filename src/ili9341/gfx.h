@@ -2,9 +2,9 @@
 #define _ADAFRUIT_GFX_H
 
 #include <mraa.h>
-#define boolean bool
 
-//#define swap(a, b) { int16_t t = a; a = b; b = t; }
+#define boolean bool
+#define swap(a, b) { int16_t t = a; a = b; b = t; }
 
 class Adafruit_GFX {
 
