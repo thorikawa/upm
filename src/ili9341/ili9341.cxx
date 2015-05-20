@@ -101,7 +101,7 @@ void Adafruit_ILI9341::begin(void) {
     }
 
   m_csPinCtx = mraa_gpio_init (m_cs);
-  if (m_csPinCtx == nullptr) {
+  if (m_csPinCtx == NULL) {
     fprintf (stderr, "Are you sure that pin%d you requested is valid on your platform?", m_cs);
     exit (1);
   }
@@ -113,7 +113,7 @@ void Adafruit_ILI9341::begin(void) {
 
 
   m_dcPinCtx = mraa_gpio_init (m_dc);
-  if (m_dcPinCtx == nullptr) {
+  if (m_dcPinCtx == NULL) {
     fprintf (stderr, "Are you sure that pin%d you requested is valid on your platform?", m_dc);
     exit (1);
   }
@@ -126,7 +126,7 @@ void Adafruit_ILI9341::begin(void) {
   // toggle RST low to reset
   if (m_rst > 0) {
     m_rstPinCtx = mraa_gpio_init (m_rst);
-    if (m_rstPinCtx == nullptr) {
+    if (m_rstPinCtx == NULL) {
       fprintf (stderr, "Are you sure that pin%d you requested is valid on your platform?", m_rst);
       exit (1);
     }
