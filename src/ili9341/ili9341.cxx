@@ -24,6 +24,8 @@
 
 using namespace upm;
 
+#define MRAA_SPI_TRANSFER_BUF
+
 //Hardware SPI version. 
 #define X86_BUFFSIZE 128
 #define SPI_FREQ 8000000
