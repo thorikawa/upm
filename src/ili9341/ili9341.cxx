@@ -61,14 +61,7 @@ void inline Adafruit_ILI9341::spiwrite16(uint16_t c) {
   uint8_t rxData[2];
   txData[0] = (c>>8) & 0xff;
   txData[1] = c & 0xff; 
-#ifdef MRAA_SPI_TRANSFER_BUF
-//  uint8_t rxData[2];
-  mraa_spi_transfer_buf(SPI, txData, rxData, 2);
-#else
-  uint8_t *prxData = mraa_spi_write_buf(SPI, txData, 2);
-  if (prxData)
-    free(prxData);
-#endif    
+  mraa_spi_write_buf(SPI, txData, 2);
 }
 
 void inline Adafruit_ILI9341::spiwrite16X2(uint16_t w1, uint16_t w2) {
@@ -77,14 +70,7 @@ void inline Adafruit_ILI9341::spiwrite16X2(uint16_t w1, uint16_t w2) {
   txData[1] = w1 & 0xff; 
   txData[2] = (w2>>8) & 0xff;
   txData[3] = w2 & 0xff; 
-#ifdef MRAA_SPI_TRANSFER_BUF
-  //uint8_t rxData[4];
-  mraa_spi_transfer_buf(SPI, txData, NULL/*rxData*/, 4);
-#else
-  uint8_t *prxData = mraa_spi_write_buf(SPI, txData, 4);
-  if (prxData)
-    free(prxData);
-#endif    
+  mraa_spi_write_buf(SPI, txData, 4);
 }
 
 void inline Adafruit_ILI9341::spiwriteN(uint32_t count, uint16_t c) {
@@ -100,11 +86,13 @@ void inline Adafruit_ILI9341::spiwriteN(uint32_t count, uint16_t c) {
       txData[i+1] = c & 0xff;
     }
     while (count >= X86_BUFFSIZE) {
-      mraa_spi_transfer_buf(SPI, txData, rxData, 2*X86_BUFFSIZE);
+      // mraa_spi_transfer_buf(SPI, txData, rxData, 2*X86_BUFFSIZE);
+      mraa_spi_write_buf(SPI, txData, 2*X86_BUFFSIZE);
       count -= X86_BUFFSIZE;
     }
     if (count) {
-      mraa_spi_transfer_buf(SPI, txData, rxData, 2*count);
+      // mraa_spi_transfer_buf(SPI, txData, rxData, 2*count);
+      mraa_spi_write_buf(SPI, txData, 2*count);
     }
   }
 }

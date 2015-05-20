@@ -156,55 +156,23 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
   mraa_gpio_context _gpioDC;
   mraa_gpio_context _gpioCS;
   
-  uint8_t _fDCHigh; // is the DC High
-  uint8_t _fCSHigh; // is the CS high... 
-  
   // try the C++ version
   mraa_spi_context SPI;
-//#define MINIMIZE_CALLS  
-#ifndef MINIMIZE_CALLS
+
   void DCHigh()  {
-            mraa_gpio_write(_gpioDC, 1);
-    }
+    mraa_gpio_write(_gpioDC, 1);
+  }
   
   void DCLow()  {
-            mraa_gpio_write(_gpioDC, 0);
+    mraa_gpio_write(_gpioDC, 0);
 	}
 
   void CSHigh()  {
-            mraa_gpio_write(_gpioCS, 1);
+    mraa_gpio_write(_gpioCS, 1);
 	}
   void CSLow()  {
-            mraa_gpio_write(_gpioCS, 0);
-    }
-#else
-  void DCHigh()  {
-        if (!_fDCHigh) {
-            mraa_gpio_write(_gpioDC, 1);
-            _fDCHigh = 1;
-        }
-    }
-  
-  void DCLow()  {
-        if (_fDCHigh) {
-            mraa_gpio_write(_gpioDC, 0);
-            _fDCHigh = 0;
-        }
-	}
-
-  void CSHigh()  {
-        if (!_fCSHigh) {
-            mraa_gpio_write(_gpioCS, 1);
-            _fCSHigh = 1;
-        }
-	}
-  void CSLow()  {
-        if (_fCSHigh) {
-            mraa_gpio_write(_gpioCS, 0);
-            _fCSHigh = 0;
-        }
-    }
-#endif    
+    mraa_gpio_write(_gpioCS, 0);
+  }
 };
 
 }
