@@ -13,10 +13,8 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#ifndef _ADAFRUIT_ILI9341H_
-#define _ADAFRUIT_ILI9341H_
+#pragma once
 
-#define __ARDUINO_X86__
 #include <mraa.h>
 #include <gfx.h>
 
@@ -94,6 +92,8 @@
 //=================================================================
 // Hardware SPI version
 //=================================================================
+
+namespace upm {
 
 class Adafruit_ILI9341 : public Adafruit_GFX {
 
@@ -207,5 +207,4 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
 #endif    
 };
 
-
-#endif
+}

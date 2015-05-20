@@ -16,16 +16,13 @@
 #include "ili9341.h"
 #include <limits.h>
 #include <cstring>
-
-// Test to see if not needing malloc/free will speed up SPI transfers
-#define MRAA_SPI_TRANSFER_BUF
-#ifdef MRAA_SPI_TRANSFER_BUF
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
-#endif
+
+using namespace upm;
 
 //Hardware SPI version. 
 #define X86_BUFFSIZE 128

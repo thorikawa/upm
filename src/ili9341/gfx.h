@@ -1,10 +1,11 @@
-#ifndef _ADAFRUIT_GFX_H
-#define _ADAFRUIT_GFX_H
+#pragma once
 
 #include <mraa.h>
 
 #define boolean bool
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
+
+namespace upm {
 
 class Adafruit_GFX {
 
@@ -77,4 +78,4 @@ class Adafruit_GFX {
   static const unsigned char font[];  
 };
 
-#endif // _ADAFRUIT_GFX_H
+}

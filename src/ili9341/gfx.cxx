@@ -35,6 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "glcdfont.h"
 #include <math.h>
 
+using namespace upm;
+
 #define pgm_read_byte(x)        (*((char *)x))
 
 inline uint16_t abs(int16_t val) {
