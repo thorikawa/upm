@@ -32,9 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "gfx.h"
-
-using namespace upm;
-
 #include "glcdfont.h"
 #ifdef __AVR__
  #include <avr/pgmspace.h>
@@ -45,6 +42,7 @@ using namespace upm;
 
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
 
+using namespace upm;
 
 Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
   WIDTH(w), HEIGHT(h)
