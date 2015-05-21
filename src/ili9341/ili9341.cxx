@@ -54,7 +54,6 @@ void inline Adafruit_ILI9341::spiwrite(uint8_t c) {
 
   // transaction sets mode
   int r = mraa_spi_write(SPI, c);
-  printf("mraa_spi_write:%d\n", r);
 }
 
 void inline Adafruit_ILI9341::spiwrite16(uint16_t c) {

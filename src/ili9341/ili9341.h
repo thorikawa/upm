@@ -160,26 +160,18 @@ class Adafruit_ILI9341 : public Adafruit_GFX {
   mraa_spi_context SPI;
 
   void DCHigh()  {
-    mraa_result_t error = MRAA_SUCCESS;
-    error = mraa_gpio_write(_gpioDC, 1);
-    if (error != MRAA_SUCCESS) mraa_result_print (error);
+    mraa_gpio_write(_gpioDC, 1);
   }
   
   void DCLow()  {
-    mraa_result_t error = MRAA_SUCCESS;
-    error = mraa_gpio_write(_gpioDC, 0);
-    if (error != MRAA_SUCCESS) mraa_result_print (error);
+    mraa_gpio_write(_gpioDC, 0);
 	}
 
   void CSHigh()  {
-    mraa_result_t error = MRAA_SUCCESS;
-    error = mraa_gpio_write(_gpioCS, 1);
-    if (error != MRAA_SUCCESS) mraa_result_print (error);
+    mraa_gpio_write(_gpioCS, 1);
 	}
   void CSLow()  {
-    mraa_result_t error = MRAA_SUCCESS;
-    error = mraa_gpio_write(_gpioCS, 0);
-    if (error != MRAA_SUCCESS) mraa_result_print (error);
+    mraa_gpio_write(_gpioCS, 0);
   }
 };
 
